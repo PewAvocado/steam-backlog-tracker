@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+model Game {
+  id Int @id @default(autoincrement())
+  steam_appid Int? @unique
+  name String 
+  image_url String?
+  playtime_minutes Int @default(0)
+  source String 
+  status String @default("backlog")
+  priority Int @default(2)
+  rating Int?
+  notes String?
+  started_at DateTime? 
+  finished_at DateTime? 
+  enriched_at DateTime? 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  genres Genres[]
+}
+
+model Genres {
+  id Int @id @default(autoincrement())
+  name String @unique
+  games Game[]
+}
+
+model Setting{
+  key String @id
+  value String
+}
