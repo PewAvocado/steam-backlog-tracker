@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { gameService, NotFoundError } from "../services/game.service";
-import type { CreateGameInput } from "../schemas/game.schema";
+import type { CreateGameInput, UpdateGameInput } from "../schemas/game.schema";
 
 export const gameController = {
   async list(_req: Request, res: Response) {
@@ -27,5 +27,21 @@ export const gameController = {
     const input = req.body as CreateGameInput;
     const game = await gameService.createGame(input);
     res.status(201).json(game);
+  },
+
+  async update(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    const input = req.body as UpdateGameInput;
+
+    try {
+      const game = await gameService.updateGame(id, input);
+      res.status(200).json(game);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ error: { message: err.message } });
+        return;
+      }
+      throw err;
+    }
   },
 };

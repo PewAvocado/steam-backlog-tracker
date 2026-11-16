@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma";
-import type { CreateGameInput } from "../schemas/game.schema";
+import type { CreateGameInput, UpdateGameInput } from "../schemas/game.schema";
 
 type CreateGameData = CreateGameInput & { source: "MANUAL" };
 
@@ -18,5 +18,12 @@ export const gameRepository = {
 
   create(data: CreateGameData) {
     return prisma.game.create({ data });
+  },
+
+  update(id: number, data: UpdateGameInput) {
+    return prisma.game.update({
+      where: { id },
+      data,
+    });
   },
 };

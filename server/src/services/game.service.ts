@@ -1,5 +1,5 @@
 import { gameRepository } from "../repositories/game.repository";
-import type { CreateGameInput } from "../schemas/game.schema";
+import type { CreateGameInput, UpdateGameInput } from "../schemas/game.schema";
 
 export class NotFoundError extends Error {
   statusCode = 404;
@@ -20,5 +20,19 @@ export const gameService = {
 
   createGame(input: CreateGameInput) {
     return gameRepository.create({ ...input, source: "MANUAL" });
+  },
+
+  async updateGame(id: number, input: UpdateGameInput) {
+    const existingGame = await this.getGame(id);
+    const dataToUpdate: UpdateGameInput = { ...input };
+
+    if (
+      input.status === "COMPLETED" &&
+      input.finishedAt === undefined &&
+      !existingGame.finished_at
+    ) {
+      dataToUpdate.finishedAt = new Date();
+    }
+    return gameRepository.update(id, dataToUpdate);
   },
 };
