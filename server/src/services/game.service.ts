@@ -1,9 +1,6 @@
+import { NotFoundError } from "../errors/app.error";
 import { gameRepository } from "../repositories/game.repository";
 import type { CreateGameInput, UpdateGameInput } from "../schemas/game.schema";
-
-export class NotFoundError extends Error {
-  statusCode = 404;
-}
 
 export const gameService = {
   listGames() {
@@ -28,11 +25,16 @@ export const gameService = {
 
     if (
       input.status === "COMPLETED" &&
-      input.finishedAt === undefined &&
+      input.finished_at === undefined &&
       !existingGame.finished_at
     ) {
-      dataToUpdate.finishedAt = new Date();
+      dataToUpdate.finished_at = new Date();
     }
     return gameRepository.update(id, dataToUpdate);
+  },
+
+  async deleteGame(id: number) {
+    await this.getGame(id);
+    return gameRepository.delete(id);
   },
 };

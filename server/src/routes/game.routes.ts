@@ -14,3 +14,4 @@ gameRouter.patch(
   validate(updateGameSchema),
   gameController.update,
 );
+gameRouter.delete("/:id", validate(gameIdParamSchema, "params"), gameController.delete);

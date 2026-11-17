@@ -26,4 +26,10 @@ export const gameRepository = {
       data,
     });
   },
+
+  delete(id: number) {
+    return prisma.game.delete({
+      where: { id },
+    });
+  },
 };

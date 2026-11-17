@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
-import { gameService, NotFoundError } from "../services/game.service";
+import { gameService } from "../services/game.service";
 import type { CreateGameInput, UpdateGameInput } from "../schemas/game.schema";
+import { NotFoundError } from "../errors/app.error";
 
 export const gameController = {
   async list(_req: Request, res: Response) {
@@ -36,6 +37,20 @@ export const gameController = {
     try {
       const game = await gameService.updateGame(id, input);
       res.status(200).json(game);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        res.status(404).json({ error: { message: err.message } });
+        return;
+      }
+      throw err;
+    }
+  },
+
+  async delete(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    try {
+      const game = await gameService.deleteGame(id);
+      res.status(204).json(game);
     } catch (err) {
       if (err instanceof NotFoundError) {
         res.status(404).json({ error: { message: err.message } });
